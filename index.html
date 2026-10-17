@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FERDAUS // THE LEGENDARY REVIVER - Cyber Tribute</title>
+    <!-- خطوط عربية فخمة جداً (Amiri, Changa & Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,700;1,700&family=Changa:wght@600;800;900&family=Cairo:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #020205;
+            --primary-red: #ff003c;
+            --accent-fire: #ff5500;
+            --flame-yellow: #ffcc00;
+            --neon-purple: #9d00ff;
+            --light-purple: #c864ff;
+            --white-hot: #ffffff;
+            --glass-bg: rgba(12, 10, 22, 0.88);
+            --glass-border: rgba(157, 0, 255, 0.45);
+            --neon-glow: 0 0 35px rgba(157, 0, 255, 0.5), 0 0 20px rgba(255, 0, 60, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Canvas for Hyper-Realistic Physics Engine */
+        #fireCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Ambient Cyberpunk Grid Overlay */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(157, 0, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 60, 0.04) 1px, transparent 1px);
+            background-size: 35px 35px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(2, 2, 5, 0.97) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            font-family: 'Changa', sans-serif;
+        }
+
+        .nav-brand .sender {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-brand .recipient {
+            font-family: 'Amiri', serif;
+            color: #ff3366;
+            text-shadow: 0 0 15px var(--primary-red), 0 0 25px var(--neon-purple);
+            font-size: 1.7rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(157, 0, 255, 0.2), rgba(255, 0, 60, 0.2));
+            border: 1px solid var(--neon-purple);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #fff;
+            font-family: 'Changa', sans-serif;
+            text-shadow: 0 0 10px var(--neon-purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.4);
+            animation: pulseBadge 2s infinite alternate;
+        }
+
+        .status-badge i {
+            color: var(--flame-yellow);
+        }
+
+        @keyframes pulseBadge {
+            0% { box-shadow: 0 0 10px rgba(157, 0, 255, 0.3); }
+            100% { box-shadow: 0 0 30px rgba(255, 0, 60, 0.8); }
+        }
+
+        /* Hero Header */
+        header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            padding: 120px 20px 60px 20px;
+            text-align: center;
+        }
+
+        .hero-logo-wrapper {
+            position: relative;
+            margin-bottom: 35px;
+            display: inline-block;
+        }
+
+        .crown-container {
+            position: absolute;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            filter: drop-shadow(0 0 20px var(--neon-purple)) drop-shadow(0 0 40px var(--primary-red));
+            animation: floatCrown 3s ease-in-out infinite;
+        }
+
+        .crown-container i {
+            font-size: 4.2rem;
+            background: linear-gradient(180deg, #ffffff 0%, var(--flame-yellow) 40%, var(--neon-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes floatCrown {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            50% { transform: translateX(-50%) translateY(-15px) rotate(-3deg); }
+        }
+
+        .logo-frame {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            position: relative;
+            z-index: 12;
+            padding: 5px;
+            background: linear-gradient(135deg, var(--white-hot), var(--light-purple), var(--primary-red));
+            box-shadow: 
+                0 0 35px var(--neon-purple),
+                0 0 70px var(--primary-red),
+                inset 0 0 25px rgba(255, 255, 255, 0.9);
+            animation: logoPulse 2.5s infinite alternate ease-in-out;
+        }
+
+        .logo-frame img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #000;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(1); box-shadow: 0 0 30px var(--neon-purple), 0 0 50px var(--primary-red); }
+            100% { transform: scale(1.04); box-shadow: 0 0 55px var(--neon-purple), 0 0 95px var(--primary-red); }
+        }
+
+        .logo-fire-burst {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 290px;
+            height: 120px;
+            background: radial-gradient(ellipse at top, rgba(255,255,255,0.95) 0%, rgba(157,0,255,0.65) 40%, rgba(255,0,60,0.65) 70%, transparent 100%);
+            filter: blur(15px);
+            border-radius: 50%;
+            z-index: 10;
+            pointer-events: none;
+            animation: auraFlame 1s infinite alternate;
+        }
+
+        @keyframes auraFlame {
+            0% { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
+            100% { opacity: 1; transform: translateX(-50%) scaleY(1.3) translateY(10px); }
+        }
+
+        /* Profile Description Box */
+        .bio-card {
+            max-width: 920px;
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            padding: 45px;
+            position: relative;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--neon-glow);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .bio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--light-purple), var(--primary-red), transparent);
+        }
+
+        .bio-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding-bottom: 15px;
+        }
+
+        .bio-header h2 {
+            font-family: 'Changa', sans-serif;
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bio-header h2 i {
+            color: var(--neon-purple);
+            text-shadow: 0 0 12px var(--neon-purple);
+        }
+
+        .bio-text {
+            font-family: 'Amiri', serif;
+            font-size: 1.65rem;
+            line-height: 2.4;
+            color: #f7f7fc;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+            text-align: center;
+        }
+
+        .bio-text span.tag-white {
+            color: #ffffff;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+        }
+
+        .bio-text span.tag-red {
+            color: #ff2a5f;
+            font-weight: 900;
+            text-shadow: 0 0 15px var(--primary-red);
+            background: rgba(255, 0, 60, 0.15);
+            padding: 2px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 60, 0.45);
+        }
+
+        .bio-text span.tag-purple {
+            color: #d175ff;
+            font-weight: 900;
+            text-shadow: 0 0 18px var(--neon-purple);
+            background: rgba(157, 0, 255, 0.18);
+            padding: 2px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(157, 0, 255, 0.45);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            padding: 100px 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Changa', sans-serif;
+            font-size: 3.1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(180deg, #ffffff 10%, var(--light-purple) 50%, var(--primary-red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(157,0,255,0.5));
+        }
+
+        .section-header h2::after {
+            content: '';
+            display: block;
+            width: 85%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--primary-red));
+            margin: 12px auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 20px var(--neon-purple);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card-3d {
+            background: rgba(15, 12, 22, 0.88);
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-3d:hover {
+            border-color: var(--light-purple);
+            box-shadow: 0 15px 35px rgba(157, 0, 255, 0.45), 0 0 25px rgba(255, 0, 60, 0.45);
+        }
+
+        .card-img-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+        }
+
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-3d:hover .card-img-container img {
+            transform: scale(1.1) rotate(1deg);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(4, 3, 8, 0.9);
+            border: 1px solid var(--neon-purple);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 12px rgba(157, 0, 255, 0.6);
+        }
+
+        .card-caption {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(15, 12, 22, 0.9) 0%, rgba(3, 2, 6, 0.98) 100%);
+            border-top: 1px solid rgba(157, 0, 255, 0.25);
+            text-align: center;
+        }
+
+        .card-caption h3 {
+            font-family: 'Changa', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.4);
+        }
+
+        /* Interactive Feature Section */
+        .interactive-section {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, transparent 0%, rgba(157, 0, 255, 0.08) 50%, transparent 100%);
+        }
+
+        .interactive-container {
+            max-width: 850px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* High-Tech Cyber Flame Button */
+        .cyber-fire-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 22px 60px;
+            font-family: 'Changa', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--primary-red) 50%, var(--accent-fire) 100%);
+            border: 2px solid var(--white-hot);
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 40px var(--neon-purple), 0 0 70px var(--primary-red);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            overflow: hidden;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .cyber-fire-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 60%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .cyber-fire-btn:hover::before {
+            transform: scale(1);
+        }
+
+        .cyber-fire-btn:hover {
+            transform: translateY(-5px) scale(1.06);
+            box-shadow: 0 0 60px var(--neon-purple), 0 0 100px var(--primary-red);
+        }
+
+        .cyber-fire-btn:active {
+            transform: translateY(2px) scale(0.97);
+        }
+
+        .cyber-fire-btn i {
+            font-size: 1.8rem;
+            color: var(--flame-yellow);
+            animation: pulseIcon 1.2s infinite alternate;
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--flame-yellow)); }
+            100% { transform: scale(1.25) rotate(8deg); filter: drop-shadow(0 0 15px #ffffff); }
+        }
+
+        /* Terminal Display Box */
+        .quote-terminal {
+            margin-top: 45px;
+            background: rgba(8, 6, 14, 0.95);
+            border: 2px solid var(--neon-purple);
+            border-radius: 20px;
+            padding: 38px 30px;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 30px rgba(157, 0, 255, 0.3), 0 12px 35px rgba(0,0,0,0.9);
+            position: relative;
+        }
+
+        .quote-terminal p {
+            font-family: 'Amiri', serif;
+            font-size: 1.7rem;
+            line-height: 1.9;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 0 0 15px var(--neon-purple), 0 0 8px var(--primary-red);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(157, 0, 255, 0.25);
+            background: rgba(2, 2, 4, 0.97);
+            color: #888888;
+            font-size: 1.05rem;
+            font-family: 'Changa', sans-serif;
+        }
+
+        footer span {
+            color: var(--light-purple);
+            font-weight: 800;
+            text-shadow: 0 0 12px var(--neon-purple);
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 12px 20px; }
+            .nav-brand { font-size: 1.05rem; }
+            .status-badge { display: none; }
+            .logo-frame { width: 170px; height: 170px; }
+            .bio-text { font-size: 1.35rem; }
+            .cyber-fire-btn { padding: 18px 35px; font-size: 1.2rem; }
+            .quote-terminal p { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Overlays -->
+    <div class="bg-grid"></div>
+    <div class="vignette"></div>
+
+    <!-- Physics Fire Engine Background Canvas -->
+    <canvas id="fireCanvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-brand">
+            <span class="sender"><i class="fa-solid fa-gamepad" style="color: var(--light-purple);"></i> من طرف عبد الرحمان</span>
+            <span style="color: rgba(255,255,255,0.3);">|</span>
+            <span class="recipient">إلى فردوس 👑</span>
+        </div>
+        <div class="status-badge">
+            <i class="fa-solid fa-crown"></i>
+            <span>SERVER MENA #1 REVIVER</span>
+        </div>
+    </nav>
+
+    <!-- Hero / Header Section -->
+    <header>
+        <div class="hero-logo-wrapper">
+            <div class="crown-container">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div class="logo-frame">
+                <!-- الصورة كما هي -->
+                <img src="image2.png" alt="Ferdaus Avatar" onerror="this.src='https://placehold.co/300x300/101010/ff003c?text=FERDAUS'">
+            </div>
+            <div class="logo-fire-burst"></div>
+        </div>
+
+        <div class="bio-card">
+            <div class="bio-header">
+                <h2><i class="fa-solid fa-fire-flame-curved"></i> بروفايل الأسطورة</h2>
+                <span style="color: var(--light-purple); font-weight: 800; text-shadow: 0 0 12px var(--neon-purple);">[FREE FIRE MNA]</span>
+            </div>
+            <div class="bio-text">
+                الأسطورة <span class="tag-white">Ferdaus</span>، عندها <span class="tag-purple">20 ans</span>، من مدينة <span class="tag-white">كلميمة</span> العريقة. دْرّافة وتْبَاتة، و<span class="tag-purple">تْشْلِحِيت</span> ديالنا ههه! وأحسن وحدة فـ <span class="tag-red">Free Fire</span> فـ <span class="tag-red">revive (العْتيق)</span> بيّنْ صُورْة الاحتراف واللعب النقي! 🔥⚡
+            </div>
+        </div>
+    </header>
+
+    <!-- Esports Photo Gallery Section -->
+    <section class="gallery-section">
+        <div class="section-header">
+            <h2>ألبوم اللقطات الخالدة</h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">CLUTCH MOMENT #1</span>
+                    <img src="image1.png" alt="Ferdaus Moment 1" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=CLUTCH+1'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #1</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">REVIVE QUEEN</span>
+                    <img src="image3.png" alt="Ferdaus Moment 2" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=REVIVE+QUEEN'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #2</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">SQUAD SAVIOR</span>
+                    <img src="image4.png" alt="Ferdaus Moment 3" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=SQUAD+SAVIOR'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #3</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">KHALMIMA POWER</span>
+                    <img src="image5.png" alt="Ferdaus Moment 4" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=KHALMIMA+POWER'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #4</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">HEADSHOT MASTER</span>
+                    <img src="image6.png" alt="Ferdaus Moment 5" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=HEADSHOT+MASTER'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #5</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">BOOYAH CREW</span>
+                    <img src="image7.png" alt="Ferdaus Moment 6" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=BOOYAH+CREW'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #6</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">UNSTOPPABLE</span>
+                    <img src="image8.png" alt="Ferdaus Moment 7" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=UNSTOPPABLE'">
+                </div>
+                <div class="card-caption">
+                    <h3>لقطة أسطورية #7</h3>
+                </div>
+            </div>
+            <div class="card-3d">
+                <div class="card-img-container">
+                    <span class="card-badge">THE FINAL BOOYAH</span>
+                    <img src="image9.png" alt="Ferdaus Moment 8" onerror="this.src='https://placehold.co/400x500/101010/ff003c?text=FINAL+BOOYAH'">
+                </div>
+                <div class="card-caption">
+                    <h3>اللقطة النهائية #8 🔥</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Section -->
+    <section class="interactive-section">
+        <div class="interactive-container">
+            <button class="cyber-fire-btn" onclick="triggerQuote()">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <span>اكتشفي كلمة اليوم لـ فردوس ✨</span>
+            </button>
+            <div class="quote-terminal">
+                <p id="quoteOutput">كليكي على الزر الناري الفوقاني باش تكتشفي الرسالة الخاصة ديال اليوم! 🎯</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>تم التصميم والتطوير باحترافية عالية من طرف <span>عبد الرحمان</span> لـ <span>فردوس</span> &copy; 2026</p>
+    </footer>
+
+    <!-- Scripts Section -->
+    <script>
+        const canvas = document.getElementById('fireCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class RealisticParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 80;
+                this.speedY = Math.random() * 4 + 2;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 30 + 15;
+                this.life = 0;
+                this.maxLife = Math.random() * 70 + 50;
+                this.isFire = Math.random() < 0.75; 
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX + Math.sin(this.life * 0.05) * 1.2;
+                this.life++;
+
+                if (this.isFire) {
+                    this.size *= 0.955;
+                } else {
+                    this.size *= 1.025;
+                }
+
+                if (this.life >= this.maxLife || this.size <= 0.3) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
+                let progress = this.life / this.maxLife;
+
+                if (this.isFire) {
+                    let r, g, b, alpha;
+                    if (progress < 0.25) {
+                        r = 255; g = 255; b = Math.floor(200 * (1 - progress * 4));
+                        alpha = 0.9;
+                    } else if (progress < 0.65) {
+                        r = 255; g = Math.floor(120 * (1 - (progress - 0.25) * 2.5)); b = 0;
+                        alpha = 0.8;
+                    } else {
+                        r = Math.floor(255 * (1 - (progress - 0.65) * 2.85)); g = 0; b = 40;
+                        alpha = (1 - progress) * 0.7;
+                    }
+
+                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = `rgba(255, 0, 60, ${alpha})`;
+                } else {
+                    let alpha = (1 - progress) * 0.15;
+                    ctx.fillStyle = `rgba(35, 15, 50, ${alpha})`;
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        const particleCount = 120;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new RealisticParticle());
+        }
+
+        function animatePhysicsFire() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animatePhysicsFire);
+        }
+
+        animatePhysicsFire();
+
+        /* 3D Card Interactive Mouse Parallax Tilt Effect */
+        document.querySelectorAll('.card-3d').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -12;
+                const rotateY = ((x - centerX) / centerX) * 12;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+        });
+
+        /* Web Audio Sound & Random Quote Engine */
+        function playFireSparkSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.3);
+
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        const quotes = [
+            "أحسن وحدة فـ Free Fire ",
+            "ES STEEVA dima lfoo9! 🔥👑",
+            "تْشْلِحِيت حرة أ أسطورة، ديما منورة السيرفر ومرعبا الخصوم! ⚡💪",
+            "أحسن reviver فـ العتيق، إيلا طحتي فالماتش كوني هانية الظهر معمر! ☠️🔥",
+            "درّافة وتباتة، تحية لأقوى بنت فالمغرب! 🏆🎮",
+            "الضحكة والنشاط والتكتيك مع فردوس كيجيبو البوياه (BOOYAH) مضمون! 🚀✨",
+            "عبد الرحمان كيهدي ليك هاد التحفة الفنية، ديما العافية شاعلة وما كاطفاش! 🌟🔥"
+        ];
+
+        function triggerQuote() {
+            playFireSparkSound();
+
+            const quoteOutput = document.getElementById('quoteOutput');
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+            canvas.style.filter = 'brightness(1.5)';
+            setTimeout(() => { canvas.style.filter = 'none'; }, 200);
+
+            quoteOutput.style.opacity = '0';
+            quoteOutput.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                quoteOutput.textContent = randomQuote;
+                quoteOutput.style.opacity = '1';
+                quoteOutput.style.transform = 'scale(1)';
+            }, 250);
+        }
+    </script>
+</body>
+</html>
